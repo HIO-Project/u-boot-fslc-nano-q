@@ -62,8 +62,11 @@ iomux_v3_cfg_t const uart1_pads[] = {
 	//MX6_PAD_CSI0_DAT10__UART1_TX_DATA | MUX_PAD_CTRL(UART_PAD_CTRL),
 	//MX6_PAD_CSI0_DAT11__UART1_RX_DATA | MUX_PAD_CTRL(UART_PAD_CTRL),
         //add ben uart debug port
-       MX6_PAD_SD3_DAT7__UART1_TX_DATA | MUX_PAD_CTRL(UART_PAD_CTRL),
-       MX6_PAD_SD3_DAT6__UART1_RX_DATA | MUX_PAD_CTRL(UART_PAD_CTRL),
+       	MX6_PAD_SD3_DAT7__UART1_TX_DATA | MUX_PAD_CTRL(UART_PAD_CTRL),
+       	MX6_PAD_SD3_DAT6__UART1_RX_DATA | MUX_PAD_CTRL(UART_PAD_CTRL),
+
+        //usb reset --ben
+	MX6_PAD_ENET_TXD1__GPIO1_IO29 | MUX_PAD_CTRL(NO_PAD_CTRL),
 };
 
 iomux_v3_cfg_t const enet_pads[] = {
@@ -164,7 +167,8 @@ static void setup_spi(void)
 
 iomux_v3_cfg_t const pcie_pads[] = {
 	MX6_PAD_EIM_D19__GPIO3_IO19 | MUX_PAD_CTRL(NO_PAD_CTRL),	/* POWER */
-	MX6_PAD_GPIO_17__GPIO7_IO12 | MUX_PAD_CTRL(NO_PAD_CTRL),	/* RESET */
+	//MX6_PAD_GPIO_17__GPIO7_IO12 | MUX_PAD_CTRL(NO_PAD_CTRL),	/* RESET */
+	MX6_PAD_GPIO_5__GPIO1_IO05 | MUX_PAD_CTRL(NO_PAD_CTRL),      //++ben
 };
 
 static void setup_pcie(void)
@@ -181,6 +185,14 @@ iomux_v3_cfg_t const di0_pads[] = {
 static void setup_iomux_uart(void)
 {
 	imx_iomux_v3_setup_multiple_pads(uart1_pads, ARRAY_SIZE(uart1_pads));
+
+	return;
+        //add usb reset--ben
+        gpio_direction_output(IMX_GPIO_NR(1, 29), 0);
+        udelay(100);
+        gpio_set_value(IMX_GPIO_NR(1, 29), 0);
+        udelay(100);
+        gpio_set_value(IMX_GPIO_NR(1, 29), 1);
 }
 
 #ifdef CONFIG_FSL_ESDHC
@@ -455,6 +467,13 @@ int board_init(void)
 	setup_spi();
 #endif
 	setup_i2c(1, CONFIG_SYS_I2C_SPEED, 0x7f, &i2c_pad_info1);
+
+        //add usb reset--ben
+        gpio_direction_output(IMX_GPIO_NR(1, 29), 0);
+        udelay(500);
+        gpio_set_value(IMX_GPIO_NR(1, 29), 0);
+        udelay(500);
+        gpio_set_value(IMX_GPIO_NR(1, 29), 1);
 
 	return 0;
 }

@@ -124,6 +124,7 @@
 	"uimage=uImage\0" \
 	"fdt_file=" CONFIG_DEFAULT_FDT_FILE "\0" \
 	"fdt_addr=0x18000000\0" \
+	"ramdisk_addr=0x12900000\0" \
 	"boot_fdt=try\0" \
 	"ip_dyn=yes\0" \
 	"console=" CONFIG_CONSOLE_DEV "\0" \
@@ -132,6 +133,7 @@
 	"mmcdev=" __stringify(CONFIG_SYS_MMC_ENV_DEV) "\0" \
 	"mmcpart=1\0" \
 	"mmcroot=" CONFIG_MMCROOT " rootwait rw\0" \
+	"usbroot= \0" \
 	"update_sd_firmware=" \
 		"if test ${ip_dyn} = yes; then " \
 			"setenv get_cmd dhcp; " \
@@ -146,14 +148,18 @@
 			"fi; "	\
 		"fi\0" \
 	EMMC_ENV	  \
+        "usbargs=setenv bootargs console=${console},${baudrate} " \
+                "root=/dev/sda2 rootwait rw video=mxcfb0:dev=hdmi,1280x720M@60,if=RGB24 video=mxcfb1:off video=mxcfb2:off video=mxcfb3:off fbmem=28M,10M console=ttymxc0,115200 vmalloc=400M consoleblank=0 mxc_hdmi.only_cea=1\0" \
 	"mmcargs=setenv bootargs console=${console},${baudrate} " \
-		"root=${mmcroot}\0" \
+		"root=${mmcroot} video=mxcfb0:dev=hdmi,1280x720M@60,if=RGB24 video=mxcfb1:off video=mxcfb2:off video=mxcfb3:off fbmem=28M,10M console=ttymxc0,115200 vmalloc=400M consoleblank=0 mxc_hdmi.only_cea=1\0" \
 	"loadbootscript=" \
 		"fatload mmc ${mmcdev}:${mmcpart} ${loadaddr} ${script};\0" \
 	"bootscript=echo Running bootscript from mmc ...; " \
 		"source\0" \
 	"loaduimage=fatload mmc ${mmcdev}:${mmcpart} ${loadaddr} ${uimage}\0" \
 	"loadfdt=fatload mmc ${mmcdev}:${mmcpart} ${fdt_addr} ${fdt_file}\0" \
+	"usbboot=echo Booting from usb....; " \
+		"run usbargs;bootm ${loadaddr} - ${fdt_addr};\0"	\
 	"mmcboot=echo Booting from mmc ...; " \
 		"run mmcargs; " \
 		"if test ${boot_fdt} = yes || test ${boot_fdt} = try; then " \
@@ -194,6 +200,16 @@
 			"bootz; " \
 		"fi;\0"
 #define CONFIG_BOOTCOMMAND \
+	"usb reset;usb dev 0; " \
+        "if fatload usb 0:1 ${loadaddr} uImage_usb; then " \
+		"if fatload usb 0:1 ${fdt_addr} imx6q-sabresd.dtb_usb; then " \
+			"run usbboot; " \
+		"else " \
+			"echo dtb not found; " \
+		"fi; " \
+        "else " \
+                "echo usbboot:no usb found; " \
+        "fi; " \
 	"mmc dev ${mmcdev};" \
 	"if mmc rescan; then " \
 		"if run loadbootscript; then " \
