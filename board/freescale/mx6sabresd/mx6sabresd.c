@@ -444,7 +444,7 @@ int board_eth_init(bd_t *bis)
 {
 	setup_iomux_enet();
 	setup_pcie();
-
+	
 	return cpu_eth_init(bis);
 }
 
@@ -475,6 +475,13 @@ int board_init(void)
         udelay(500);
         gpio_set_value(IMX_GPIO_NR(1, 29), 1);
 
+	//add pcie reset--ben
+        //gpio_direction_output(IMX_GPIO_NR(1, 5), 0);
+        //udelay(500);
+        //gpio_set_value(IMX_GPIO_NR(1, 5), 0);
+        //udelay(500);
+        //gpio_set_value(IMX_GPIO_NR(1, 5), 1);
+	
 	return 0;
 }
 

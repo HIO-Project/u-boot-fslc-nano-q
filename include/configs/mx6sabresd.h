@@ -20,7 +20,7 @@
 //#define CONFIG_DEFAULT_FDT_FILE	"imx6q-sabresd-ldo.dtb"
 #define CONFIG_DEFAULT_FDT_FILE       "imx6q-sabresd.dtb"
 #elif defined(CONFIG_MX6DL)
-#define CONFIG_DEFAULT_FDT_FILE	"imx6dl-sabresd-ldo.dtb"
+#define CONFIG_DEFAULT_FDT_FILE	"imx6dl-sabresd.dtb"
 #endif
 #define PHYS_SDRAM_SIZE		(1u * 1024 * 1024 * 1024)
 
