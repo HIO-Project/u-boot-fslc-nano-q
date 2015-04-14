@@ -202,7 +202,7 @@
 #define CONFIG_BOOTCOMMAND \
 	"usb reset;usb dev 0; " \
         "if fatload usb 0:1 ${loadaddr} uImage_usb; then " \
-		"if fatload usb 0:1 ${fdt_addr} imx6q-sabresd.dtb_usb; then " \
+		"if fatload usb 0:1 ${fdt_addr} imx6-sabresd.dtb_usb; then " \
 			"run usbboot; " \
 		"else " \
 			"echo dtb not found; " \
